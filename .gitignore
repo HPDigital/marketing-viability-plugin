@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Workspaces de ejecucion del pipeline
+viability-workspace-*/
+
+# Outputs generados
+*.pdf
+!examples/**/*.pdf
+*.xlsx
+!examples/**/*.xlsx
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log

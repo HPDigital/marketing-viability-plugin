@@ -1,0 +1,59 @@
+# Inputs de ejemplo para generate_part1_charts.py
+# Ejecucion:
+#   python skills/mv-part1-market-diagnosis/scripts/generate_part1_charts.py \
+#     --inputs examples/chart_inputs_part1.yaml \
+#     --output-dir /tmp/charts/
+
+tam_sam_som:
+  tam: {min: 25000, max: 45000, unit: "personas con discapacidad de miembro inferior"}
+  sam: {min: 4000, max: 7500, unit: "personas con poder adquisitivo y acceso a canal"}
+  som: {min: 80, max: 150, unit: "Big Hire/ano"}
+  tam_value: {min: 50, max: 100, currency: "USD M"}
+  sam_value: {min: 9, max: 19, currency: "USD M"}
+  som_value: {min: 1.9, max: 3.6, currency: "USD M"}
+
+cagr_by_segment:
+  - {segment: "P1 traumatico amputacion reciente", cagr: 2.0}
+  - {segment: "P2 diabetico con riesgo amputacion", cagr: 5.0}
+  - {segment: "P3 clinicas y aseguradoras B2B", cagr: 3.0}
+
+porter:
+  rivalry: 3
+  new_entrants: 2
+  substitutes: 4
+  suppliers: 3
+  buyers: 3
+
+price_benchmark:
+  - {category: "Importadores anonimos", low: 1500, high: 3500, mid: 2500}
+  - {category: "Ortopedias locales", low: 4000, high: 7000, mid: 5500}
+  - {category: "Propuesta del caso", low: 6000, high: 12000, mid: 9000}
+  - {category: "Viajes medicos a Lima/Buenos Aires", low: 8000, high: 15000, mid: 11500}
+
+four_forces:
+  push: {score: 4, label: "Push (dolor del statu quo)"}
+  pull: {score: 3, label: "Pull (atractivo de la propuesta)"}
+  anxiety: {score: 4, label: "Anxiety (miedo al cambio de canal)"}
+  habit: {score: 3, label: "Habit (rutinas establecidas con ortopedista)"}
+
+outcomes:
+  - {id: "O01", desc: "Encontrar tecnico con conocimiento", importance: 5, satisfaction: 2}
+  - {id: "O02", desc: "Repuestos garantizados a 24 meses", importance: 5, satisfaction: 1}
+  - {id: "O07", desc: "Financiamiento accesible en cuotas", importance: 5, satisfaction: 1}
+  - {id: "O11", desc: "Minimizar caidas en superficie irregular", importance: 5, satisfaction: 2}
+  - {id: "O17", desc: "Estetica bajo ropa", importance: 3, satisfaction: 3}
+
+wtp_by_segment:
+  - {segment: "P1", samples: [6000, 7500, 8000, 9000, 10000, 11000, 12000]}
+  - {segment: "P2", samples: [4000, 5000, 6000, 6500, 7000, 8000]}
+
+competitors_2d:
+  dimensions:
+    x: "Calidad tecnica del componente"
+    y: "Servicio integrado y seguimiento 24m"
+  competitors:
+    - {name: "Ortopedias locales", x: 3, y: 2, share: 25}
+    - {name: "Importadores anonimos", x: 2, y: 1, share: 30}
+    - {name: "Representantes europeos", x: 4, y: 2, share: 10}
+    - {name: "Viajes medicos", x: 4, y: 1, share: 5}
+    - {name: "Propuesta del caso", x: 5, y: 5, share: 0}
