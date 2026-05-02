@@ -1,17 +1,14 @@
 {
   "name": "marketing-viability-plugin",
   "version": "1.0.0",
-  "description": "System of skills determinista para producir un analisis profesional de viabilidad de marketing y financiera de un nuevo negocio. Orquestador + 4 skills atomicos en secuencia estricta (diagnostico de mercado, marketing estrategico, marketing operativo, viabilidad financiera) con handoff YAML canonico, control de calidad cruzado entre partes, graficos Python a 300 dpi y entrega final como Markdown + PDF profesional. Incluye clausulas anti-agentificacion embebidas en cada skill.",
+  "description": "System of skills determinista (agent-free) para analisis de viabilidad de marketing y financiera de un nuevo negocio. Orquestador + 4 skills atomicos en secuencia estricta (diagnostico de mercado, marketing estrategico, marketing operativo, viabilidad financiera) con handoff YAML canonico, control de calidad cruzado entre partes, graficos Python a 300 dpi y entrega final como Markdown + PDF profesional. Incluye clausulas anti-agentificacion embebidas en cada SKILL.md y un verificador estructural en scripts/verify_system.py.",
   "author": {
     "name": "Herwig Poleyn Paz",
     "email": "hpoleynpaz@gmail.com"
   },
-  "license": "MIT",
   "homepage": "https://github.com/HPDigital/marketing-viability-plugin",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/HPDigital/marketing-viability-plugin"
-  },
+  "repository": "https://github.com/HPDigital/marketing-viability-plugin",
+  "license": "MIT",
   "keywords": [
     "system-of-skills",
     "marketing-viability",
@@ -29,49 +26,5 @@
     "validation-program",
     "anti-agentification",
     "deterministic-pipeline"
-  ],
-  "architecture": "system-of-skills",
-  "architecture_notes": "Este plugin es un sistema determinista de skills compuesto por 4 skills atomicos (mv-part1 a mv-part4) y un orquestador (marketing-viability-orchestrator). NO es un agente. NO debe modificarse para introducir loops ReAct, tool-use libre o decisiones dinamicas en runtime. Cada skill produce un handoff YAML canonico que el siguiente consume y valida. Las clausulas anti-agentificacion estan embebidas en cada SKILL.md y son contractuales. Ver ARCHITECTURE.md para reglas arquitectonicas y WARNINGS-CLAUDE-CODE.md para instrucciones de modificacion segura.",
-  "skills": [
-    "skills/mv-part1-market-diagnosis",
-    "skills/mv-part2-strategic-marketing",
-    "skills/mv-part3-operational-marketing",
-    "skills/mv-part4-financial-viability",
-    "skills/marketing-viability-orchestrator"
-  ],
-  "system": {
-    "orchestrator": "marketing-viability-orchestrator",
-    "sequence": [
-      "mv-part1-market-diagnosis",
-      "mv-part2-strategic-marketing",
-      "mv-part3-operational-marketing",
-      "mv-part4-financial-viability"
-    ],
-    "handoff_format": "yaml-canonical",
-    "agent_free": true,
-    "deliverables_per_skill": [
-      "partN_output.md",
-      "partN_output.pdf",
-      "handoff_partN.yaml",
-      "charts/*.png"
-    ],
-    "deliverables_orchestrator": [
-      "dossier_viabilidad.md",
-      "dossier_viabilidad.pdf",
-      "cross_quality_report.md"
-    ],
-    "quality_gates": [
-      "validate_handoff per part (presence + types of required fields)",
-      "cross_quality_check 5 inter-block coherence tests (run by orchestrator before dossier)",
-      "verify_system structural validation of every SKILL.md and plugin manifest"
-    ]
-  },
-  "python_dependencies": [
-    "pyyaml>=6.0",
-    "matplotlib>=3.7",
-    "numpy>=1.24",
-    "markdown>=3.5",
-    "weasyprint>=60.0",
-    "openpyxl>=3.1"
   ]
 }

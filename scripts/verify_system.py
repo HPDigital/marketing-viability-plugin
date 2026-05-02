@@ -170,7 +170,14 @@ def validate_anti_patterns(content: str, path: Path) -> List[str]:
 
 
 def validate_plugin_json(bundle_path: Path) -> List[str]:
-    """Valida el plugin.json si existe (modo plugin)."""
+    """Valida el plugin.json si existe (modo plugin Claude Code).
+
+    Claude Code aplica validacion estricta del schema y rechaza campos custom
+    como `architecture`, `system`, `python_dependencies`, etc. La declaracion
+    arquitectonica system-of-skills se preserva (a) en las clausulas
+    anti-agentificacion embebidas en cada SKILL.md y (b) en ARCHITECTURE.md.
+    Aqui solo verificamos los campos del schema oficial.
+    """
     plugin_json_path = bundle_path / ".claude-plugin" / "plugin.json"
     if not plugin_json_path.exists():
         return []  # No es modo plugin, ok
@@ -178,19 +185,22 @@ def validate_plugin_json(bundle_path: Path) -> List[str]:
     try:
         data = json.loads(plugin_json_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as e:
-        return [f"{plugin_json_path}: JSON inválido: {e}"]
-    required_fields = ["name", "version", "description", "skills", "system"]
-    for field in required_fields:
-        if field not in data:
-            errors.append(f"{plugin_json_path}: falta campo '{field}'")
-    if data.get("architecture") != "system-of-skills":
-        errors.append(f"{plugin_json_path}: 'architecture' debe ser 'system-of-skills'")
-    system = data.get("system", {})
-    for f in ["orchestrator", "sequence", "handoff_format", "agent_free"]:
-        if f not in system:
-            errors.append(f"{plugin_json_path}: falta system.{f}")
-    if system.get("agent_free") is not True:
-        errors.append(f"{plugin_json_path}: system.agent_free debe ser true")
+        return [f"{plugin_json_path}: JSON invalido: {e}"]
+    # Unico campo obligatorio del schema oficial
+    if "name" not in data or not data["name"]:
+        errors.append(f"{plugin_json_path}: falta campo obligatorio 'name'")
+    # Tipos de campos opcionales (solo verificamos los que pueden romper la instalacion)
+    if "repository" in data and not isinstance(data["repository"], str):
+        errors.append(
+            f"{plugin_json_path}: 'repository' debe ser string URL, no objeto. "
+            f"Claude Code rechaza el formato npm-style {{type, url}}.")
+    if "author" in data and not isinstance(data["author"], dict):
+        errors.append(
+            f"{plugin_json_path}: 'author' debe ser objeto {{name, email?, url?}}, no string.")
+    if "skills" in data and not isinstance(data["skills"], (str, list)):
+        errors.append(
+            f"{plugin_json_path}: 'skills' si esta presente debe ser string o array de strings "
+            f"(rutas a directorios de skills). Lo recomendado es omitirlo y dejar auto-discovery.")
     return errors
 
 
