@@ -67,6 +67,80 @@ adicional.
 - Si el usuario quiere modificar el resultado de una parte ya producida:
   invocar el skill productor, no este orquestador.
 
+## Entregables obligatorios (contractual, no negociable)
+
+Este orquestador produce, sin excepcion, **una entrega independiente por
+cada parte**. Cada parte debe entregar EXACTAMENTE los siguientes archivos
+ANTES de que el orquestador pueda pasar a la siguiente fase:
+
+| Por parte (x4) | Archivo |
+|---|---|
+| Documento Markdown | `partN/partN_output.md` |
+| Documento PDF profesional A4 con graficos incrustados | `partN/partN_output.pdf` |
+| Handoff YAML canonico (archivo separado) | `partN/handoff_partN.yaml` |
+| Carpeta de graficos PNG 300 dpi | `partN/charts/*.png` |
+
+Adicional para Parte 4:
+
+| Archivo | Tipo |
+|---|---|
+| Modelo financiero en Excel | `part4/financial_model.xlsx` |
+
+**Total minimo de archivos canonicos al cierre del pipeline: 4 x 3 + 1 = 13
+archivos estructurados** (sin contar los PNG individuales). Si alguno
+falta, el pipeline NO esta completo y el orquestador NO debe declarar
+exito.
+
+El **dossier consolidado** (`dossier/dossier_viabilidad.md` y `.pdf`) es un
+entregable ADICIONAL que agrega los cuatro outputs y anade el reporte de
+coherencia cruzada. Su produccion NO sustituye los archivos por parte. Si
+el usuario pide "solo el dossier" o "consolidado", el orquestador produce
+los 13 archivos por parte PRIMERO y despues el dossier. **No hay atajo.**
+
+### Verificacion mecanica de existencia (antes de declarar exito)
+
+Antes de reportar PASS al usuario, el orquestador EJECUTA literalmente:
+
+```python
+from pathlib import Path
+ws = Path("viability-workspace-<slug>")
+required = [
+    ws / "part1" / "part1_output.md",  ws / "part1" / "part1_output.pdf",  ws / "part1" / "handoff_part1.yaml",
+    ws / "part2" / "part2_output.md",  ws / "part2" / "part2_output.pdf",  ws / "part2" / "handoff_part2.yaml",
+    ws / "part3" / "part3_output.md",  ws / "part3" / "part3_output.pdf",  ws / "part3" / "handoff_part3.yaml",
+    ws / "part4" / "part4_output.md",  ws / "part4" / "part4_output.pdf",  ws / "part4" / "handoff_part4.yaml",
+    ws / "part4" / "financial_model.xlsx",
+]
+missing = [p for p in required if not p.exists()]
+assert not missing, "FAIL: faltan {}".format(missing)
+```
+
+Una validacion PASS reportada sin que existan estos archivos en el
+filesystem es **violacion contractual** del orquestador y degrada el
+sistema a agente narrativo. Si Claude Code u otro asistente declara
+"todo listo" sin haber verificado existencia, RECHAZAR el resultado y
+exigir la verificacion mecanica.
+
+### Cross-quality check: ejecutado, no narrado
+
+En la Fase de cierre, el orquestador EJECUTA literalmente el script:
+
+```bash
+python skills/marketing-viability-orchestrator/scripts/cross_quality_check.py \
+  --workspace viability-workspace-<slug> \
+  --output dossier/cross_quality_report.md
+```
+
+y lee la salida real del proceso. **Prohibido declarar "5/5 PASS" o
+"4/5 PASS" sin haber ejecutado el script y leido stdout.** La
+autoevaluacion narrativa de los cinco tests es violacion contractual.
+
+Si el script no esta disponible (por ejemplo, ejecucion en entorno sin
+Python), el orquestador declara explicitamente: "cross_quality_check no
+ejecutado por falta de runtime; validacion manual no sustituye al
+script". Nunca rotular como PASS automatico lo que fue juicio narrativo.
+
+
 ## Procedimiento de ejecución
 
 ### Fase 0: Recepción y validación del brief

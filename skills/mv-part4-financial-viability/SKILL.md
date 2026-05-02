@@ -209,7 +209,15 @@ Produce nueve PNG canónicos:
 8. `chart_08_risk_matrix.png` — Matriz probabilidad × impacto.
 9. `chart_09_validation_calendar.png` — Cronograma de desembolsos.
 
-### Paso 13: Modelo financiero XLSX (opcional)
+### Paso 13: Modelo financiero XLSX (obligatorio v1.1)
+
+El XLSX es entregable canonico de Parte 4, NO opcional. Sin el, los
+indicadores VAN/TIR/payback son afirmaciones, no resultados verificables.
+El XLSX debe incluir minimo cinco hojas: (1) Supuestos, (2) Proyeccion
+de ingresos por linea/escenario, (3) Estructura de costos detallada,
+(4) Flujo de caja mensual ano 1 + trimestral anos 2-5, (5) Indicadores
+con formulas vivas (no hard-coded). El orquestador VERIFICA que el
+archivo existe antes de declarar exito.
 
 ```bash
 python scripts/build_financial_model_xlsx.py --inputs handoff_inputs.yaml --output financial_model.xlsx
@@ -241,7 +249,7 @@ Devolver al usuario (o al orquestador):
 - `part4_output.pdf`
 - `handoff_part4.yaml`
 - `charts/chart_01_*.png` ... `charts/chart_09_*.png`
-- `financial_model.xlsx` (opcional)
+- `financial_model.xlsx` (obligatorio v1.1)
 
 NO inicia automáticamente el dossier consolidado. Eso es responsabilidad del
 orquestador, que ejecutará además el `cross_quality_check.py` antes de
@@ -328,6 +336,125 @@ El artefacto producido se considera válido si y solo si:
 10. `final_verdict.capital_needed_total` está cuantificado en moneda.
 11. La validación `python validate_handoff.py --handoff handoff_part4.yaml
     --part 4` retorna código 0.
+
+## Reglas duras adicionales v1.1 (no modificar)
+
+### Tipo de cambio paralelo (obligatorio en mercados con brecha cambiaria)
+
+Para Bolivia, Argentina, Venezuela, Cuba, Libano, Nigeria y cualquier
+mercado con brecha cambiaria > 20% entre tasa oficial y paralela, el
+modelo financiero debe incluir tres escenarios cambiarios, NO uno:
+
+- **Escenario "FX-oficial"**: tasa oficial declarada por el banco
+  central.
+- **Escenario "FX-paralelo"**: tasa de mercado paralelo o tasa real
+  efectiva (libre, blue, BCV implicita, BS, etc.).
+- **Escenario "FX-stress"**: percentil 90 de la volatilidad observada en
+  los ultimos 24 meses.
+
+Si la propuesta cobra en moneda local pero importa componentes en
+USD/EUR, los costos importados se convierten en cada escenario con la
+tasa correspondiente. **Subestimar el costo importado por usar tasa
+oficial en mercados con brecha es error estructural invalidante** que
+puede convertir VAN positivo en VAN negativo en el escenario realista.
+
+Documentar fuente de cada tasa con fecha de consulta:
+- Bolivia: BCB tasa oficial + Casa Hyperion / Binance P2P + percentil 90.
+- Argentina: BCRA + DolarBlue/MEP + percentil 90.
+- Venezuela: BCV + DolarToday + percentil 90.
+
+### Tasa de descuento: descomposicion CAPM obligatoria
+
+La tasa NO se elige por default. Se descompone explicitamente:
+
+```
+r = rf + beta * (rm - rf) + risk_country + risk_project
+```
+
+donde:
+
+- `rf`: tasa libre de riesgo USD (T-Bill 10Y, declarar fecha).
+- `beta * (rm - rf)`: prima de riesgo del sector (declarar comparable
+  publico cotizado o benchmark sectorial).
+- `risk_country`: prima de riesgo pais (EMBI+ o equivalente, declarar
+  fuente y fecha).
+- `risk_project`: prima de riesgo del proyecto (early-stage, ejecucion,
+  team, etc.).
+
+Para Bolivia 2026, `risk_country` se estima en 9-12 puntos sobre tasa
+libre de riesgo USD. Tasas finales tipicas son 18-22% para proyectos
+early-stage en mercados emergentes con brecha cambiaria. Documentar
+cada componente con fuente en la seccion 17.5 del documento.
+
+### LTV con retention rate y recambio declarados
+
+El LTV no se declara como cifra opaca. Se descompone:
+
+```
+LTV = (precio_inicial * margen_bruto)
+    + sum_t(ticket_recurrente * retention_rate^t * margen)
+    + (precio_recambio * prob_recambio * margen)
+```
+
+con:
+
+- `retention_rate` declarada con fuente (benchmark sector o modelado
+  con cohorte simulada).
+- `prob_recambio` declarada (ej. 80% recambia componente principal en
+  mes 30-36).
+- `duracion_seguimiento` declarada en meses.
+
+La aritmetica completa se incluye en la seccion 23 del documento como
+tabla numerica.
+
+### Tablas numericas obligatorias (no solo graficos)
+
+En el documento Markdown, antes de generar PDF, INCLUIR como tablas
+numericas en prosa (los graficos visualizan; las tablas son la fuente de
+verdad):
+
+- **Estado de resultados (P&L)** ano por ano, escenario base, con
+  ingresos, costos variables, margen bruto, costos fijos, EBITDA,
+  amortizacion, EBIT, financieros, BAI, impuestos, beneficio neto.
+- **Balance proforma simplificado** anos 1, 3, 5 con activo corriente
+  + no corriente, pasivo corriente + no corriente, patrimonio.
+- **Flujo de caja desglosado** mensual ano 1 + trimestral anos 2-5,
+  con CFO, CFI, CFF, FCL, caja acumulada.
+- **Tabla de unit economics** con CAC, LTV, ratio LTV/CAC, payback CAC,
+  margen contributivo por linea, gross margin por linea.
+- **Tabla CAPM** con descomposicion de la tasa de descuento.
+
+Si un grafico no tiene tabla numerica respaldando, se anade la tabla o
+se elimina el grafico.
+
+### Plan de mitigacion de riesgos: formato profesional
+
+La seccion 25 (Analisis de riesgos) NO se entrega solo como matriz
+visual + descripciones. Cada riesgo material lleva ademas:
+
+| Riesgo | Probabilidad | Impacto | Mitigacion | Dueno asignado | Indicador alerta temprana | Costo de mitigacion |
+
+Sin las cinco columnas, el plan de mitigacion no es profesional, es
+inventario.
+
+### Honestidad metodologica visible
+
+Si `evidence_level` consolidado es `modeled` o `modeled-inherited`, el
+resumen ejecutivo abre con bloque literal:
+
+> Este analisis es ejercicio de modelado profesional basado en evidencia
+> heredada/secundaria. NO sustituye validacion primaria. El veredicto es
+> condicional y requiere ejecutar el programa de validacion antes de
+> comprometer capital.
+
+### Reglas de estilo (verificacion grep obligatoria antes de PDF)
+
+```bash
+grep -nP "[—–“”‘’]" part4_output.md
+```
+
+Sin matches o corregir antes de generar PDF.
+
 
 ## Cláusulas anti-agentificación (no modificar sin revisión arquitectónica)
 

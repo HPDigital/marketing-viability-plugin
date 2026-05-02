@@ -305,6 +305,37 @@ El artefacto producido se considera válido si y solo si:
 11. La validación `python validate_handoff.py --handoff handoff_part2.yaml
     --part 2` retorna código 0.
 
+## Reglas duras adicionales v1.1 (no modificar)
+
+### Strategy Canvas: legibilidad obligatoria
+
+El Strategy Canvas con mas de 9 factores comprime ilegiblemente las
+etiquetas del eje X en formato A4 vertical. Si hay 10 o mas factores,
+generar el chart en orientacion horizontal o pagina apaisada, o reducir
+factores agrupando los menos diferenciadores. Verificar legibilidad de
+etiquetas a 100% de zoom en el PDF antes de entregar.
+
+### BMC visual: legibilidad minima 9pt
+
+Si se incluye BMC visual, el texto en cada bloque debe ser minimo 9pt en
+el PDF final. Si no entra, abrir a pagina horizontal o exportar como
+anexo independiente.
+
+### TAM-SAM-SOM concentricos: reposicionar etiquetas
+
+El chart de circulos concentricos suele solapar etiquetas internas con
+el subtitulo. Verificar el PNG a 100% antes de incrustar; si hay
+solape, regenerar con offset de etiquetas.
+
+### Reglas de estilo (verificacion grep obligatoria antes de PDF)
+
+```bash
+grep -nP "[—–“”‘’]" part2_output.md
+```
+
+Sin matches o corregir antes de generar PDF.
+
+
 ## Cláusulas anti-agentificación (no modificar sin revisión arquitectónica)
 
 Este skill forma parte de un *system of skills* diseñado bajo arquitectura

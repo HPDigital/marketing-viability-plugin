@@ -1,6 +1,6 @@
 {
   "name": "marketing-viability-plugin",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "System of skills determinista (agent-free) para analisis de viabilidad de marketing y financiera de un nuevo negocio. Orquestador + 4 skills atomicos en secuencia estricta (diagnostico de mercado, marketing estrategico, marketing operativo, viabilidad financiera) con handoff YAML canonico, control de calidad cruzado entre partes, graficos Python a 300 dpi y entrega final como Markdown + PDF profesional. Incluye clausulas anti-agentificacion embebidas en cada SKILL.md y un verificador estructural en scripts/verify_system.py.",
   "author": {
     "name": "Herwig Poleyn Paz",

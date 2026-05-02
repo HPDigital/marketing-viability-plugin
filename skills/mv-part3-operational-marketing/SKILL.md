@@ -317,6 +317,78 @@ El artefacto producido se considera válido si y solo si:
 11. La validación `python validate_handoff.py --handoff handoff_part3.yaml
     --part 3` retorna código 0.
 
+## Reglas duras adicionales v1.1 (no modificar)
+
+### Coherencia CAC blended <-> costo de canal real (no negociable)
+
+El CAC blended declarado debe equivaler aproximadamente, anio por anio,
+al cociente:
+
+```
+CAC_blended_Yn ~ sum(presupuesto_canal_anual_i_Yn) / volumen_capturado_Yn
+```
+
+donde `presupuesto_canal_anual_i` incluye salarios fijos del personal
+comercial dedicado al canal (ej. director clinico-comercial, asistente
+comercial, key account manager), no solo gasto variable de medios.
+Documentar la verificacion en la seccion 13.7 del documento como tabla:
+
+| Anio | Volumen Big Hire | Costo total canales | CAC implicito | CAC declarado | Delta |
+|---|---|---|---|---|---|
+| Y1 | ... | ... | ... | ... | ... |
+| Y2 | ... | ... | ... | ... | ... |
+| Y3 | ... | ... | ... | ... | ... |
+
+Si el CAC implicito es > 2x el CAC declarado, REVISAR la mezcla de canales
+o reasignar costos fijos de personal a infraestructura comercial. Un CAC
+declarado que no se sostiene con la cuenta real es violacion de
+coherencia y la Parte 4 lo detectara como inconsistencia.
+
+### Coherencia funnel <-> volumen Big Hire
+
+Las tasas declaradas del embudo, multiplicadas por leads top-of-funnel,
+deben dar el mismo volumen de Big Hire que la proyeccion operativa por
+ano. Si el embudo describe regimen ideal (Y4-Y5), rotularlo
+explicitamente con DOS embudos:
+
+```
+Embudo Y4-Y5 (regimen estabilizado): 1000 leads -> 600 -> 300 -> 105 BH
+Embudo Y2 (rampa):                     400 leads -> 180 ->  70 ->  35 BH
+```
+
+Sin esta distincion, un embudo unico que no cuadra con el volumen Y2
+proyectado es error grave.
+
+### Stock vs flujo en dimensionamiento operativo
+
+El plan de capacidad fase 1 se calcula contra el flujo (nuevos pacientes
+por anio), no contra el stock (pacientes vivos). El Little Hire es
+servicio sobre stock; el Big Hire es servicio sobre flujo. Mezclarlos en
+la misma capacidad operativa es error estructural.
+
+### Plan de precios: elasticidad declarada
+
+La seccion 12 incluye, en formato tabla, la elasticidad asumida del
+precio mid declarado: como cambia el volumen capturado si el precio sube
++10% o baja -10%. Si no hay elasticidad declarada, el test de unidad
+economica de la seccion 12.7 NO esta completo.
+
+### Costo de oportunidad del personal comercial declarado
+
+La seccion 13 incluye comparacion explicita del costo del rol senior
+(director clinico-comercial) vs alternativas (asistente comercial junior
++ KAM externo). Sin esta comparacion el dimensionamiento del costo
+comercial no esta justificado.
+
+### Reglas de estilo (verificacion grep obligatoria antes de PDF)
+
+```bash
+grep -nP "[—–“”‘’]" part3_output.md
+```
+
+Sin matches o corregir antes de generar PDF.
+
+
 ## Cláusulas anti-agentificación (no modificar sin revisión arquitectónica)
 
 Este skill forma parte de un *system of skills* diseñado bajo arquitectura

@@ -327,6 +327,72 @@ Estos criterios son los que el skill `mv-part2-strategic-marketing` usará
 para validar el handoff. Cualquier debilitamiento de estos criterios degrada
 el sistema.
 
+## Reglas duras adicionales v1.1 (no modificar)
+
+Estas reglas se incorporaron tras detectarse degradaciones en outputs
+reales del pipeline. Son contractuales.
+
+### Tabla obligatoria de trazabilidad de fuentes
+
+En la seccion 2.6 del documento, INCLUIR sin excepcion una tabla con
+formato:
+
+| Fuente | Variable | Cifra | Anio | Nivel de evidencia |
+|---|---|---|---|---|
+| ej. INE Bolivia | poblacion total | 12.5 M | 2024 | secondary |
+| ej. AGEMED | nuevas amputaciones/anio | 800-1500 | 2024 | secondary |
+
+Cada cifra que aparezca en TAM, SAM o SOM debe tener su fila aqui. Sin
+esta tabla el handoff_part1.yaml se considera incompleto y el orquestador
+detiene el pipeline.
+
+### Distincion estricta flujo vs stock
+
+Al construir SOM y caracterizar segmentos:
+
+- **Flujo**: nuevos casos por anio (incidencia). Ejemplo: 800-1500
+  amputaciones/anio.
+- **Stock**: casos vivos en uso (prevalencia). Ejemplo: 3500 personas
+  con protesis activa.
+
+NUNCA mezclar flujo con stock en el mismo SOM. Si la fuente upstream
+da uno solo, derivar el otro con tasas declaradas (mortalidad,
+rotacion, duracion media de la protesis). Mezclarlos infla
+artificialmente el SOM y es error estructural invalidante.
+
+### Reglas de estilo tipografico (verificacion grep obligatoria)
+
+Antes de generar el PDF, ejecutar:
+
+```bash
+grep -nP "[—–“”‘’]" part1_output.md
+```
+
+Si hay matches, corregir antes de continuar:
+
+- U+2014 (em dash) y U+2013 (en dash): reemplazar por coma, punto o
+  parentesis.
+- U+201C/U+201D (comillas curvas dobles) y U+2018/U+2019 (curvas
+  simples): reemplazar por comillas y apostrofes ASCII rectos.
+
+Las comillas curvas y la raya larga renderizan inconsistentemente entre
+weasyprint, pandoc y markdown viewers. Estilo institucional exige ASCII.
+
+### Honestidad metodologica visible en resumen ejecutivo
+
+El resumen ejecutivo abre con un bloque visible (callout o tabla) que
+declara `evidence_level` consolidado. Si es `modeled` o
+`modeled-inherited`, el resumen DEBE decir literalmente:
+
+> Este analisis es ejercicio de modelado profesional basado en evidencia
+> heredada/secundaria. NO sustituye validacion primaria. El veredicto es
+> condicional y requiere ejecutar el programa de validacion antes de
+> comprometer capital.
+
+Esconder el evidence_level solo en la cabecera del documento es practica
+deshonesta y degrada credibilidad del sistema.
+
+
 ## Cláusulas anti-agentificación (no modificar sin revisión arquitectónica)
 
 Este skill forma parte de un *system of skills* diseñado bajo arquitectura
