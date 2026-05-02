@@ -9,7 +9,7 @@
 
    ```
    /plugin marketplace add https://github.com/HPDigital/marketing-viability-plugin
-   /plugin install marketing-viability-plugin@<marketplace-name>
+   /plugin install marketing-viability-plugin@hpdigital-marketplace
    ```
 
 3. Reinicia Claude Code para que detecte los skills.

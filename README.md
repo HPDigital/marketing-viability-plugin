@@ -52,7 +52,7 @@ de un agente.
 
 ```
 /plugin marketplace add https://github.com/HPDigital/marketing-viability-plugin
-/plugin install marketing-viability-plugin@<marketplace-name>
+/plugin install marketing-viability-plugin@hpdigital-marketplace
 ```
 
 ### Opción B — Carga directa

@@ -1,0 +1,39 @@
+{
+  "name": "hpdigital-marketplace",
+  "owner": {
+    "name": "HPDigital",
+    "email": "hpoleynpaz@gmail.com",
+    "url": "https://github.com/HPDigital"
+  },
+  "metadata": {
+    "description": "Marketplace de HPDigital con plugins de analisis estrategico y de viabilidad. Arquitectura system-of-skills determinista con clausulas anti-agentificacion embebidas.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "marketing-viability-plugin",
+      "source": "./",
+      "description": "System of skills determinista (agent-free) para analisis de viabilidad de marketing y financiera de un nuevo negocio. Orquestador + 4 skills atomicos en secuencia estricta (diagnostico de mercado, marketing estrategico, marketing operativo, viabilidad financiera) con handoff YAML canonico, control de calidad cruzado entre partes, graficos Python a 300 dpi y entrega final como Markdown + PDF profesional.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Herwig Poleyn Paz",
+        "email": "hpoleynpaz@gmail.com"
+      },
+      "license": "MIT",
+      "homepage": "https://github.com/HPDigital/marketing-viability-plugin",
+      "keywords": [
+        "system-of-skills",
+        "marketing-viability",
+        "business-feasibility",
+        "tam-sam-som",
+        "blue-ocean",
+        "stp",
+        "porter",
+        "jtbd",
+        "cac-ltv",
+        "npv-irr-payback",
+        "anti-agentification"
+      ]
+    }
+  ]
+}
